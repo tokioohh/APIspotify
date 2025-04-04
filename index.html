@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Artists - Spotify</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="intro-section" id="intro-section">
+        <h1>Descubre Tus Artistas Mas Escuchados</h1>
+        <img class="logotipo" src="logo.png" alt="logo">
+        <img class="logotipo" src="Screenshot 2025-03-26 224620.png" alt="preview">
+        <p class="intro-text">Conéctate con Spotify y explora tus artistas más escuchados, sus géneros y más, con esta API rápida y fácil de usar.</p>
+        <a href="/login" class="login-btn">Conectar con Spotify</a>
+    </div>
+
+    <div id="content" class="artists-content">
+        <h1>Tus Artistas Más Escuchados</h1>
+        <div id="artists-container" class="artists-container">
+            <!-- Los artistas se cargarán aquí dinámicamente -->
+        </div>
+        <p id="error" class="error"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const accessToken = urlParams.get('access_token');
+
+            const introSection = document.getElementById('intro-section');
+            const contentSection = document.getElementById('content');
+
+            // Si hay un access_token, cargamos los artistas
+            if (accessToken) {
+                introSection.style.display = 'none';
+                contentSection.style.display = 'block';
+                fetchTopArtists(accessToken);
+            } else {
+                introSection.style.display = 'block';
+                contentSection.style.display = 'none';
+            }
+
+            async function fetchTopArtists(token) {
+                try {
+                    const response = await fetch(`/api/top-artists?access_token=${token}`);
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error?.message || 'Error al obtener los datos');
+                    }
+                    const artists = await response.json();
+
+                    const container = document.getElementById('artists-container');
+                    container.innerHTML = ''; // Limpia el contenedor
+
+                    artists.forEach(artist => {
+                        const card = document.createElement('div');
+                        card.className = 'artist-card';
+
+                        if (artist.image) {
+                            const image = document.createElement('img');
+                            image.className = 'artist-image';
+                            image.src = artist.image;
+                            image.alt = `${artist.name} photo`;
+                            card.appendChild(image);
+                        }
+
+                        const name = document.createElement('h2');
+                        name.className = 'artist-name';
+                        name.textContent = artist.name;
+
+                        const followers = document.createElement('p');
+                        followers.className = 'artist-followers';
+                        followers.textContent = `Seguidores: ${artist.followers.toLocaleString()}`;
+
+                        const genres = document.createElement('p');
+                        genres.className = 'artist-genres';
+                        genres.textContent = `Géneros: ${artist.genres.join(', ')}`;
+
+                        card.appendChild(name);
+                        card.appendChild(followers);
+                        card.appendChild(genres);
+                        container.appendChild(card);
+                    });
+                } catch (error) {
+                    document.getElementById('error').textContent = error.message;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

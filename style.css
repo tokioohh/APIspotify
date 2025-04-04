@@ -1,0 +1,133 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    color: #fdfdfd;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-btn {
+    background-color: #1db954;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #17a846;
+}
+
+.artists-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+}
+
+.artist-card {
+    background-color: #282828;
+    border-radius: 10px;
+    padding: 20px;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+    text-align: center;
+}
+
+.artist-card:hover {
+    transform: scale(1.05);
+}
+
+.artist-image {
+    width: 100%;
+    height: 250px;
+    margin-bottom: 15px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.artist-name {
+    font-size: 20px;
+    color: #ffffff;
+    margin: 0 0 10px;
+}
+
+.artist-followers {
+    font-size: 16px;
+    color: #b3b3b3;
+    margin: 5px 0;
+}
+
+.artist-genres {
+    font-size: 14px;
+    color: #b3b3b3;
+    margin: 5px 0;
+    font-style: italic;
+}
+
+.error {
+    color: #ff4d4d;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Nuevos estilos para la introducción */
+.intro-section {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.intro-text {
+    font-size: 16px;
+    color: #b3b3b3;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.artists-content {
+    display: none; /* Oculto por defecto hasta que el usuario inicie sesión */
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    .intro-text {
+        font-size: 14px;
+    }
+
+    .login-btn {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    .artist-card {
+        width: 100%;
+        max-width: 300px;
+    }
+
+}
+
+.logotipo{
+    max-width: 450px;
+    max-height:10%;
+
+}
