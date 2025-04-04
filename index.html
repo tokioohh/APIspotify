@@ -12,31 +12,27 @@
         <img class="logotipo" src="assets/logo.png" alt="logo">
         <img class="logotipo" src="assets/Screenshot 2025-03-26 224620.png" alt="preview">
         <p class="intro-text">Conéctate con Spotify y explora tus artistas más escuchados, sus géneros y más, con esta API rápida y fácil de usar.</p>
-        <a href="#" class="login-btn">Conectar con Spotify</a> <!-- Cambiado de /login a # -->
+        <a href="#" class="login-btn">Conectar con Spotify</a>
     </div>
 
     <div id="content" class="artists-content" style="display: none;">
         <h1>Tus Artistas Más Escuchados</h1>
-        <div id="artists-container" class="artists-container">
-            <!-- Los artistas se cargarán aquí dinámicamente -->
-        </div>
+        <div id="artists-container" class="artists-container"></div>
         <p id="error" class="error"></p>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const CLIENT_ID = '07b1a55c7025477daec25298950109aa'; // Reemplaza con tu Client ID de Spotify
-            const REDIRECT_URI = 'https://tokioohh.github.io/APIspotify/'; // Ajusta a tu URL de GitHub Pages
-            const SCOPE = 'user-top-read';  
+            const CLIENT_ID = '07b1a55c7025477daec25298950109aa'; // Tu Client ID
+            const REDIRECT_URI = 'https://tokioohh.github.io/APIspotify/'; // URL de GitHub Pages
+            const SCOPE = 'user-top-read';
 
-            // Obtener el access_token de la URL (después de la redirección de Spotify)
-            const urlParams = new URLSearchParams(window.location.search);
+            const urlParams = new URLSearchParams(window.location.hash.substring(1));
             const accessToken = urlParams.get('access_token');
 
             const introSection = document.getElementById('intro-section');
             const contentSection = document.getElementById('content');
 
-            // Si hay un access_token, cargamos los artistas
             if (accessToken) {
                 introSection.style.display = 'none';
                 contentSection.style.display = 'block';
@@ -46,24 +42,21 @@
                 contentSection.style.display = 'none';
             }
 
-            // Manejar el clic en "Conectar con Spotify"
             document.querySelector('.login-btn').addEventListener('click', (e) => {
-                e.preventDefault(); // Evita el comportamiento por defecto del enlace
+                e.preventDefault();
                 const authUrl = `https://accounts.spotify.com/authorize?${new URLSearchParams({
-                    response_type: 'token', // Usamos Implicit Grant Flow
+                    response_type: 'token',
                     client_id: CLIENT_ID,
                     scope: SCOPE,
                     redirect_uri: REDIRECT_URI,
                 })}`;
-                window.location.href = authUrl; // Redirige a Spotify
+                window.location.href = authUrl;
             });
 
             async function fetchTopArtists(token) {
                 try {
-                    const response = await fetch('https://api.spotify.com/v1/me/top/artists', {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                        },
+                    const response = await fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=medium_term', {
+                        headers: { 'Authorization': `Bearer ${token}` },
                     });
                     if (!response.ok) {
                         const errorData = await response.json();
@@ -74,16 +67,14 @@
                         name: artist.name,
                         followers: artist.followers.total,
                         genres: artist.genres,
-                        image: artist.images[0]?.url || null, // Usa la primera imagen si existe
+                        image: artist.images[0]?.url || null,
                     }));
 
                     const container = document.getElementById('artists-container');
-                    container.innerHTML = ''; // Limpia el contenedor
-
+                    container.innerHTML = '';
                     artists.forEach(artist => {
                         const card = document.createElement('div');
                         card.className = 'artist-card';
-
                         if (artist.image) {
                             const image = document.createElement('img');
                             image.className = 'artist-image';
@@ -91,19 +82,15 @@
                             image.alt = `${artist.name} photo`;
                             card.appendChild(image);
                         }
-
                         const name = document.createElement('h2');
                         name.className = 'artist-name';
                         name.textContent = artist.name;
-
                         const followers = document.createElement('p');
                         followers.className = 'artist-followers';
                         followers.textContent = `Seguidores: ${artist.followers.toLocaleString()}`;
-
                         const genres = document.createElement('p');
                         genres.className = 'artist-genres';
                         genres.textContent = `Géneros: ${artist.genres.join(', ')}`;
-
                         card.appendChild(name);
                         card.appendChild(followers);
                         card.appendChild(genres);
