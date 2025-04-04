@@ -17,18 +17,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/login', (req, res) => {
-    const scope = 'user-top-read'; // Permiso para leer los artistas más escuchados
-    const authUrl = 'https://accounts.spotify.com/authorize?' + 
-        querystring.stringify({
-            response_type: 'code',
-            client_id: CLIENT_ID,
-            scope: scope,
-            redirect_uri: redirect_uri, // Usa la constante definida previamente
-        });
-    res.redirect(authUrl);
-});
-
 app.get('/callback', async (req, res) => {
     const code = req.query.code || null;
     const error = req.query.error || null;
