@@ -12,10 +12,10 @@
         <img class="logotipo" src="assets/logo.png" alt="logo">
         <img class="logotipo" src="assets/Screenshot 2025-03-26 224620.png" alt="preview">
         <p class="intro-text">Conéctate con Spotify y explora tus artistas más escuchados, sus géneros y más, con esta API rápida y fácil de usar.</p>
-        <a href="/login" class="login-btn">Conectar con Spotify</a>
+        <a href="#" class="login-btn">Conectar con Spotify</a> <!-- Cambiado de /login a # -->
     </div>
 
-    <div id="content" class="artists-content">
+    <div id="content" class="artists-content" style="display: none;">
         <h1>Tus Artistas Más Escuchados</h1>
         <div id="artists-container" class="artists-container">
             <!-- Los artistas se cargarán aquí dinámicamente -->
@@ -25,6 +25,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const CLIENT_ID = '07b1a55c7025477daec25298950109aa'; // Reemplaza con tu Client ID de Spotify
+            const REDIRECT_URI = 'https://tokioohh.github.io/APIspotify/'; // Ajusta a tu URL de GitHub Pages
+            const SCOPE = 'user-top-read';  
+
+            // Obtener el access_token de la URL (después de la redirección de Spotify)
             const urlParams = new URLSearchParams(window.location.search);
             const accessToken = urlParams.get('access_token');
 
@@ -41,14 +46,36 @@
                 contentSection.style.display = 'none';
             }
 
+            // Manejar el clic en "Conectar con Spotify"
+            document.querySelector('.login-btn').addEventListener('click', (e) => {
+                e.preventDefault(); // Evita el comportamiento por defecto del enlace
+                const authUrl = `https://accounts.spotify.com/authorize?${new URLSearchParams({
+                    response_type: 'token', // Usamos Implicit Grant Flow
+                    client_id: CLIENT_ID,
+                    scope: SCOPE,
+                    redirect_uri: REDIRECT_URI,
+                })}`;
+                window.location.href = authUrl; // Redirige a Spotify
+            });
+
             async function fetchTopArtists(token) {
                 try {
-                    const response = await fetch(`/api/top-artists?access_token=${token}`);
+                    const response = await fetch('https://api.spotify.com/v1/me/top/artists', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    });
                     if (!response.ok) {
                         const errorData = await response.json();
                         throw new Error(errorData.error?.message || 'Error al obtener los datos');
                     }
-                    const artists = await response.json();
+                    const data = await response.json();
+                    const artists = data.items.map(artist => ({
+                        name: artist.name,
+                        followers: artist.followers.total,
+                        genres: artist.genres,
+                        image: artist.images[0]?.url || null, // Usa la primera imagen si existe
+                    }));
 
                     const container = document.getElementById('artists-container');
                     container.innerHTML = ''; // Limpia el contenedor
